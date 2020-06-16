@@ -1,0 +1,76 @@
+import pandas as pd
+import tkinter
+from tkinter.filedialog import askopenfilename
+import os
+
+
+class Utility:
+    def __init__(self):
+        self.expected_output_filename = ""
+        self.user_input_filename = ""
+        self.path_label = None
+        self.path_label1 = None
+
+        self.populate_view()
+
+    # ----------------------------------------------------------------------
+    def populate_view(self):
+        """"""
+        top = tkinter.Tk()
+        top.title("Utility")
+        top.geometry("500x350")
+
+        top_frame = tkinter.Frame(top).pack()
+        bottom_frame = tkinter.Frame(top).pack(side="bottom")
+
+        btn1 = tkinter.Button(top_frame, text="Expected output", command=self.get_expected_output)
+        btn1.pack()
+        path_label = tkinter.Label(top)
+        path_label.pack()
+        self.path_label = path_label
+
+        btn2 = tkinter.Button(top_frame, text="User Input", command=self.get_user_input)
+        btn2.pack()
+        path_label1 = tkinter.Label(top)
+        path_label1.pack()
+        self.path_label1 = path_label1
+
+        btn3 = tkinter.Button(top_frame, text="Press Enter", command=self.utility)
+        btn3.pack()
+
+        top.mainloop()
+
+    # ----------------------------------------------------------------------
+    def get_expected_output(self):
+        """"""
+        f = askopenfilename()
+        if f:
+            self.expected_output_filename = f
+            if self.path_label:
+                self.path_label.config(text=f)
+
+    # ----------------------------------------------------------------------
+    def get_user_input(self):
+        """"""
+        f = askopenfilename()
+        if f:
+            self.user_input_filename = f
+            if self.path_label1:
+                self.path_label1.config(text=f)
+
+    def utility(self):
+        """
+
+        :return:
+        """
+        expected_output = pd.read_excel(self.expected_output_filename)
+        user_input = pd.read_excel(self.user_input_filename)
+        inserted_cols = expected_output
+        cols = ([cols for cols in inserted_cols if cols not in user_input] + [cols for cols in inserted_cols if
+                                                                              cols not in user_input])
+        user_input = expected_output[cols]
+        # I'm not sure of which file_path you want to you in the immediate line below??? "~.xlsx"
+        user_input.to_excel("~.xlsx", index=False)
+
+if __name__ == "__main__":
+    a = Utility()
